@@ -8,14 +8,12 @@ class Tensor:
 
     def __init__(self, frame, multimap, struct_consts=None):
         
-        assert(isinstance(frame, tuple) or isinstance(frame, list)), "Frame must be given as a tuple or list."
-        assert(all(map(lambda x: isinstance(x, type(0)) and (x >= 0), frame))), "Frame tuple must contain nonnegative integers."
-        self.dims = frame
+        # TODO: How to check that frame is a TensorFrame???
 
         assert(isinstance(multimap, type(lambda x: x))), "multimap must be a function."
         self.map = multimap
 
-        if not(struct_consts is None):
+        if not struct_consts is None:
             self.grid = struct_consts
     
     def __repr__(self):
