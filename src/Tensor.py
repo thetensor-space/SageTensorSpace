@@ -1,14 +1,12 @@
 #
-#   Copyright 2019 Joshua Maglione
+#   Copyright 2019 Joshua Maglione and James B. Wilson
 #
 #   Distributed under MIT License
 #
 
 class Tensor:
 
-    def __init__(self, basering, frame, multimap, struct_consts=None):
-        
-        self.ring = basering
+    def __init__(self, frame, multimap, struct_consts=None):
         
         assert(isinstance(frame, tuple) or isinstance(frame, list)), "Frame must be given as a tuple or list."
         assert(all(map(lambda x: isinstance(x, type(0)) and (x >= 0), frame))), "Frame tuple must contain nonnegative integers."
@@ -35,9 +33,6 @@ class Tensor:
             s += "U0\n"
         
         mod_str = lambda x, y : str(FreeModule(x, y))
-
-        for i in range(valence):
-            s += "U" + str(valence - i - 1) + " : " + mod_str(self.ring, self.dims[i]) + "\n"
 
         return s[:-1]
 
