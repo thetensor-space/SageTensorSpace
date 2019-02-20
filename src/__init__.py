@@ -1,2 +1,2 @@
-import Frame
-import Tensor
+import frameClass
+import frameConstructors
