@@ -1,5 +1,5 @@
 #
-#   Copyright 2019 Joshua Maglione and James B. Wilson
+#   Copyright 2019 Joshua Maglione
 #
 #   Distributed under MIT License
 #
@@ -38,11 +38,17 @@ class TensorFrame():
 
     def __init__(self, bases, right_just = True):
 
-        # Check that the data makes sense
-        assert type(bases) in {list, tuple}, "bases must be a list/ tuple."
+        # Check that bases is a list or tuple
+        if not type(bases) in {list, tuple}:
+            raise TypeError("'bases' must be a list/ tuple.")
+
+        # Check that bases can define something sensible
         assert len(bases) > 0, "Number of modules must be positive."
         assert _check_consistent_ring(bases), "Modules must have the same base ring."
-        assert type(right_just) == bool, "'right_just' must be either True or False."
+
+        # Check that right_just is a boolean
+        if type(right_just) != bool:
+            raise TypeError("'right_just' must be either True or False.")
         
         # Determine if right or left justified
         if right_just:
@@ -62,6 +68,17 @@ class TensorFrame():
         for X in self._modules:
             yield X
 
+    
+    def __eq__(self, other):
+        # First check valence
+        if self.valence() != other.valence():
+            return False
+        else:
+            # Now zip will get everything from both
+            zipped = zip(self._modules, other._modules)
+            zip_eq = lambda x: x[0] == x[1]
+            return all(map(zip_eq, zipped))
+
 
     def __repr__(self):
         
@@ -79,15 +96,15 @@ class TensorFrame():
         return tuple(map(lambda x: x.dimension(), self._modules))
 
     def gen(self, a):
-        # Seems as though Sage won't accept negatives by default.
-        # assert a >= 0, "Coordinate must be nonnegative."
-        assert a < self.valence(), "Coordinate is too large."
+        # Check that a is a known coordinate
+        if not (0 <= a < self.valence()):
+            raise IndexError("Unknown coordinate.")
         return (self._modules)[a]
 
     def modules(self):
         return self._modules
 
-    def ring(self):
+    def base_ring(self):
         return (self._modules[0]).base_ring()
 
     def valence(self):
