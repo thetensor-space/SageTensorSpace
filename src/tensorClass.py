@@ -18,7 +18,7 @@ def _print_tensor_exp(v):
 
 
 def _tensor_map_sanity(t):
-    x = (U.zero() for U in t.domain())
+    x = tuple([U.zero() for U in t.domain()])
     # Attempt to evalute all zeros using the multimap given
     y = t._map(x)
 
@@ -44,19 +44,26 @@ class Tensor():
             raise TypeError("'multimap' must be a function.")
         self._map = multimap
 
-        # Check if struct_consts has been defined
-        if not struct_consts is None:
-            self._grid = struct_consts
+        self._grid = struct_consts
 
         # Check the multimap makes sense
         _tensor_map_sanity(self)
 
     
+    def __add__(self, other):
+        added = lambda x: self(x) + other(x)
+        return Tensor(self._frame, added)
+
+    
+    # Not crazy about this notation: t(x)
+    def __call__(self, x):
+        return self._map(x)
+
+
     def __repr__(self):
 
         F = self._frame
         v = F.valence()
-        R = F.base_ring()
 
         # Build the strings
         first_part = "Tensor of valence %s, " % (v)
@@ -70,7 +77,7 @@ class Tensor():
         return self.frame().base_ring()
 
     def codomain(self):
-        return self.frame().modules()[0]
+        return self.frame().modules()[-1]
 
     def domain(self):
         return tuple(self.frame().modules()[:-1])

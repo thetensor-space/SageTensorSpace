@@ -5,21 +5,36 @@
 #
 
 from sage.all import parent as _parent
+from sage.all import FreeModule as _FreeModule
 from frameClass import _build_modules
 from frameClass import TensorFrame as _TensorFrame
-from globalVars import _FREE_MODULE
+from globalVars import _FREE_MODULE, _INTEGER, _RING
 
 
 def _Construct_mod(X):
     if not type(X) in {list, tuple}:
-        assert isinstance(X, _FREE_MODULE), \
-            "Argument is not a basis nor a free module over a domain."
+        if not isinstance(X, _FREE_MODULE):
+            raise TypeError("Argument is not a basis nor a free module over a domain.")
         return X.basis()
 
 
 # Given a list or tuple, L, of R-modules, return the corresponding tensor 
 # frame such that L[0] is the 0th coordinate. 
-def Frame(L, right = True):
-    assert type(L) in {list, tuple}, "Argument must be a list or tuple."
+def FrameFromList(L, left = True):
+    if not type(L) in {list, tuple}:
+        raise TypeError("Argument must be a list or tuple.")
     bases = map(_Construct_mod, L)
-    return _TensorFrame(bases, right_just = right)
+    return _TensorFrame(bases, left_just = left)
+
+
+def Frame(R, dims, left = True):
+    # Lots of error checking because no typing
+    if not isinstance(R, _RING):
+        raise TypeError("'R' must be a ring.")
+    if not type(dims) in {list, tuple}:
+        raise TypeError("'dims' must be a list or tuple of nonnegative integers.")
+    int_and_pos = lambda x: isinstance(x, _INTEGER) and x >= 0
+    if not all(map(int_and_pos, dims)):
+        raise TypeError("'dims' must be a list or tuple of nonnegative integers.")
+
+    return FrameFromList([_FreeModule(R, d) for d in dims], left = left)

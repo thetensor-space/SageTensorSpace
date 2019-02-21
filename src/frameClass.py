@@ -36,7 +36,7 @@ def _print_module(zipped):
 
 class TensorFrame():
 
-    def __init__(self, bases, right_just = True):
+    def __init__(self, bases, left_just = True):
 
         # Check that bases is a list or tuple
         if not type(bases) in {list, tuple}:
@@ -47,11 +47,11 @@ class TensorFrame():
         assert _check_consistent_ring(bases), "Modules must have the same base ring."
 
         # Check that right_just is a boolean
-        if type(right_just) != bool:
+        if type(left_just) != bool:
             raise TypeError("'right_just' must be either True or False.")
         
-        # Determine if right or left justified
-        if right_just:
+        # Determine if right or left justified and adjust accordingly
+        if left_just:
             k = 1
         else:
             k = -1
@@ -83,11 +83,11 @@ class TensorFrame():
     def __repr__(self):
         
         # Zip the modules and their coordinates together.
-        coords = range(self.valence())
+        coords = range(self.valence()-1, -1, -1)
         zipped = zip(self.modules(), coords)
 
         # Convert the tuples to strings and cat them together.
-        list_of_str = map(_print_module, zipped)[::-1]
+        list_of_str = map(_print_module, zipped)
         first = "Tensor frame of valence " + str(self.valence()) + ":\n"
         return first + reduce(lambda x, y: x + y, list_of_str)[:-1]
 
@@ -99,7 +99,7 @@ class TensorFrame():
         # Check that a is a known coordinate
         if not (0 <= a < self.valence()):
             raise IndexError("Unknown coordinate.")
-        return (self._modules)[a]
+        return (self._modules)[-a - 1]
 
     def modules(self):
         return self._modules
