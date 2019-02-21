@@ -99,13 +99,13 @@ class TensorFrame():
         # Check that a is a known coordinate
         if not (0 <= a < self.valence()):
             raise IndexError("Unknown coordinate.")
-        return (self._modules)[-a - 1]
+        return self._modules[-a - 1]
 
     def modules(self):
         return self._modules
 
     def base_ring(self):
-        return (self._modules[0]).base_ring()
+        return self._modules[0].base_ring()
 
     def valence(self):
         return len(self._modules)

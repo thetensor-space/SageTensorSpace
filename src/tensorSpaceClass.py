@@ -4,6 +4,8 @@
 #   Distributed under MIT License
 #
 
+from frameClass import TensorFrame as _TensorFrame
+
 
 class TensorSpace():
 

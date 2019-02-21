@@ -13,4 +13,4 @@ _VECTOR_SPACE = _vec
 _FREE_MODULE = _mod
 _FUNCTION = type(lambda x: x)
 _RING = _rng
-_INTEGER = _int
+_is_int = lambda x: isinstance(x, int) or isinstance(x, _int)

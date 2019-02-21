@@ -44,7 +44,14 @@ class Tensor():
             raise TypeError("'multimap' must be a function.")
         self._map = multimap
 
-        self._grid = struct_consts
+        # Check that the struct_consts is a list or tuple.
+        if struct_consts != None:
+            if not type(struct_consts) in {list, tuple}:
+                raise TypeError("'struct_consts' must be a list or tuple.")
+            else:
+                self._grid = tuple(struct_consts)
+        else:
+            self._grid = None
 
         # Check the multimap makes sense
         _tensor_map_sanity(self)
