@@ -32,7 +32,7 @@ def _sequence_as_tensor(R, dims, S):
         for i in range(c):
             while curr[0] != 0:
                 ind = [j-1 for j in curr] + [i]
-                entry = reduce(add, [z[0]*z[1] for z in zip(ind, offsets)], 1)
+                entry = reduce(add, [z[0]*z[1] for z in zip(ind, offsets)])
                 consts = [x[j][curr[j]-1] for j in range(len(x))]
                 vec[i] += reduce(mult, consts, S[entry])
                 curr = _next_gen(dims_dom, curr)
