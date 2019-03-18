@@ -83,7 +83,9 @@ def _check_for_input_errors(M, a, b):
     # Actually, I have no idea how to check if M is a list of mats...
     
 
-
+# ==============================================================================
+#                         Tensors from sequences of data
+# ==============================================================================
 def TensorFromArray(R, dims, S):
     # Check data makes sense
     if not type(S) in {list, tuple}:
@@ -116,3 +118,32 @@ def TensorFromMatrices(M, a, b):
     R = Mats[0].base_ring()
 
     return TensorFromArray(R, dims, S)
+
+# ==============================================================================
+#                              Tensors from algebra
+# ==============================================================================
+def TensorFromQuotientPolynomialRing(Q):
+    # I don't know how to ensure that Q is a quotient of a univariate 
+    # polynomial ring, but this seems to eliminate most cases I know of.
+    try:
+        mod = Q.modulus()
+        assert _is_int(mod.degree()), "Arugment must be a polynomial quotient ring."
+    except:
+        raise TypeError("Argument must be a polynomial quotient ring.")
+    
+    # Get basic data
+    R = Q.base()
+    K = R.base_ring()
+    t = R.gens()[0]
+    d = Q.modulus().degree()
+
+    # Build the data for the black-box tensor
+    F = _FreeRFrame(K, [d, d, d])
+    sum_seq = lambda x, y: x + y
+    def eval_polys(x):
+        f = reduce(sum_seq, [x[0].list()[i] * t**i for i in range(d)])
+        g = reduce(sum_seq, [x[1].list()[i] * t**i for i in range(d)])
+        h = Q.coerce(f*g)
+        return _vector(K, h.list())
+    
+    return _Tensor(F, eval_polys) ## COME BACK HERE ##
